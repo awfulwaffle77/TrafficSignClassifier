@@ -1,0 +1,16 @@
+# Purpose
+
+This folder stores the python scripts needed to manipulate images.
+
+## PPM to JPG
+
+Due to the fact that the GTSRB dataset comes as `.ppm`, we need a script to transform them to `.jpg`
+
+## Create Kann Files
+
+Creates the `x` and `y` files. `x` contains the images. Every image is on a line, where an item on
+a column represents the pixel value. 
+
+## Modifications
+
+- I have modified the int 255 to float 255.0. I do not know if it makes a difference yet.

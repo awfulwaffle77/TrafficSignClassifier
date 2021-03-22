@@ -1,6 +1,45 @@
 # Traffic Sign Classifier
 A traffic sign classifier on the MIMXRT1020 EVK. 
 
+## Things to document on
+- Devicetree
+- Arm IP Bus (Reference Manua page 33)
+
+## What I chose
+- Due to the fact that, at the moment, I have not found out how to use fs on Zephyr, I will try to
+fiddle with the [sod embedded library](https://sod.pixlab.io/intro.html) due to the fact that
+it accept reading images from memory. I will change its `load_weights_upto`(line 4036 in `sod.c`)
+so that it can also read a model from memory.
+- I have tried to use pipes to simulate a `FILE*`, because I cannot use files, but it did not work.
+~~- Apparently, there ways to open a buffer as a `FILE*`. See here: [fmemopen](https://www.gnu.org/software/libc/manual/html_node/String-Streams.html). 
+Great read on that [here](https://bytes.com/topic/c/answers/507924-how-convert-char-file)~~
+- I have chosen to use Kann C Library
+
+## Kann C Library
+
+The example uses two files, x and y. `x` contains the images and `y` contains the labels. Files are gzipped(hence the .gz extension).
+After ungzipping(with `ungzip`), you can see the format of such file. Loading the files in the code work with either .gz file or not gzipped.
+
+
+## Zephyr
+
+### The files problem
+I saw that Zephyr accepts [open() and read()](https://docs.zephyrproject.org/latest/guides/portability/posix.html) so I tried to fiddle with them.
+
+### Finding GPIO Ports
+In the file `x` I have found the line `gpio1:gpio@401b8000`, that led me to the [Reference Manual](#) page 34, where I have found that there is a NIC Port
+GPIO1 starting at that adress.
+
+### For the Zephyr to C Code communication
+I understand the GPIO ports for `device_get_binding` are named `GPIO_x` where `x` is a number from 1 to 5. 
+The number of the PIN of the LED that is in the blinky example is 5, corresponding to `GPIO1_IO05` in the [Reference Manual](#) page 273, which has the PAD `GPIO_AB_B0_05`.
+Searching for this PAD in the Schematics, it corresponds to USER_LED.
+The pin number which has to be used in the C Zephyr code(defined as `PIN` in the [blinky example](#)) is `n` from `GPIOx_IOn`, where `x` is a number from 1 to 5.
+
+- Schematics -> contains PADs.
+- The [.xsl](#) -> contains PAD and ALT5(GPIO ports)
+- The reference manual -> contains contains PAD and ALT5(GPIO ports)
+
 ## Issues
 Please read each issue throughoutly.
 Also, please delelte `CMakeCache.txt` after every failed build attempt.
@@ -35,3 +74,5 @@ The connection should show some numbers when nothing is flashed on it
 - Be sure to download [J-Link](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack) **and read the README included**
 - Only after Dual Booting Linux was I able to get it working by following the steps on [Zephyr website](https://docs.zephyrproject.org/latest/boards/arm/mimxrt1020_evk/doc/index.html).
 - I have also installed `libusb-1.0-0-dev`, but I do not believe it is needed
+
+### Making use of a filesystem
