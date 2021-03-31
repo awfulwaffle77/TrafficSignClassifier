@@ -5,6 +5,22 @@ A traffic sign classifier on the MIMXRT1020 EVK.
 - Devicetree
 - Arm IP Bus (Reference Manua page 33)
 
+## TODO
+
+So far, I have managed to train a nerual network and make it
+identify some of the images, altough moving really slow. I
+need to have the captured image as an array of chars and feed it
+to the neural network from memory to have first full flow of work.
+So, to do:
+- Make the image acquisition use the array from the memory and feed it
+to the neural network
+- Note the current execution time and accuracy in a file so we can 
+make a graph(also please write a script that automatically saves
+all of the data we need here: layers, exec time, size, accuracy,
+initial parameters 
+After that:
+- Create a neural network of smaller size to make it identify images faster
+
 ## What I chose
 - Due to the fact that, at the moment, I have not found out how to use fs on Zephyr, I will try to
 fiddle with the [sod embedded library](https://sod.pixlab.io/intro.html) due to the fact that
@@ -15,7 +31,21 @@ so that it can also read a model from memory.
 Great read on that [here](https://bytes.com/topic/c/answers/507924-how-convert-char-file)~~
 - I have chosen to use Kann C Library
 
-## Kann C Library
+## Working with the Raspberry Pi
+
+After getting the C program with Kann library to work (altough not great at all), I have to acquire images in the same 
+format as given test data from the video camera. I should test if this works in Python and then go to write that in C.
+
+Steps:
+- Connect to the rpi (done)
+- Do the wiring as tutorials show (done)
+- Try with a quick script (python would be great) (done)
+- Port that to C and test it (c++ tho, done)
+- Check if you can create the array in memory (already created)
+- Actually modify the C program to classify the array from memory
+- Make image grayscale? for better performance
+
+### Kann C Library
 
 The example uses two files, x and y. `x` contains the images and `y` contains the labels. Files are gzipped(hence the .gz extension).
 After ungzipping(with `ungzip`), you can see the format of such file. Loading the files in the code work with either .gz file or not gzipped.
@@ -59,7 +89,7 @@ name `opencv2` which was the symlink(`ln -s`) of `opencv4/opencv2` so it fixed s
 get compiling errors. The command used to get the binary was `g++ main.cpp -lopencv_core -lopencv_imgproc -lopencv_dnn -lopencv_highgui -lopencv_features2d 
 - lopencv_imgcodecs -L/usr/local/lib -lopencv_cnn_3dobj`, where the `OpenCV core, imgproc, dnn etc. libs are in `/usr/include/opencv4/opencv2`(which also has `/usr/include/opencv2` 
 linked) and the .so library of cnn_3dobj module(named `libopencv_cnn_3dobj.so`
-- I have compiled it with `g++ main.cpp -L/usr/local/lib -lopencv_core -lopencv_imgproc -lopencv_dnn -lopencv_highgui -lopencv_features2d -lopencv_imgcodecs -lopencv_cnn_3dobj`
+- I have compiled it with `g++ main.cpp --L/usr/local/lib L/usr/local/lib -lopencv_core -lopencv_imgproc -lopencv_dnn -lopencv_highgui -lopencv_features2d -lopencv_imgcodecs -lopencv_cnn_3dobj`
 - After getting it compiled, there was still and issue of the .so files not getting recognized, so I followed 
 this [link](https://stackoverflow.com/questions/12335848/opencv-program-compile-error-libopencv-core-so-2-4-cannot-open-shared-object-f)
 - The Segmentation Fault errors are due to wrong paths in the .cpp. Some files exist, other don't, such as the `images_all` directory which has to be created.

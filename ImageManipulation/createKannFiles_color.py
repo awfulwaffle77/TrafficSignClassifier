@@ -6,9 +6,9 @@ import numpy as np
 HEADLINE = "#no:truth\t"
 HEIGHT = 28
 WIDTH = 28
-X_TRAIN_FILE = "./gtsrb-train-x.knd"
-Y_TRAIN_FILE = "./gtsrb-train-y.knd"
-TEST_FILE = "./gtsrb-test.knd"
+X_TRAIN_FILE = "./gtsrb-train-x-128.knd"
+Y_TRAIN_FILE = "./gtsrb-train-y-128.knd"
+TEST_FILE = "./gtsrb-test-128.knd"
 MAX_CLASSES = 3  # Max classes to read from files 
 MAX_IMAGES = 300
 

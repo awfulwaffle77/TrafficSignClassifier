@@ -1,0 +1,3 @@
+/home/awfulwaffle/repos/TrafficSignClassifier/kann_test/mnist_test/resize/CMakeFiles/rebuild_cache.dir
+/home/awfulwaffle/repos/TrafficSignClassifier/kann_test/mnist_test/resize/CMakeFiles/edit_cache.dir
+/home/awfulwaffle/repos/TrafficSignClassifier/kann_test/mnist_test/resize/CMakeFiles/resize.dir

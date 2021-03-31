@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "kann.h": "c"
+        "kann.h": "c",
+        "core.hpp": "c"
     }
 }
