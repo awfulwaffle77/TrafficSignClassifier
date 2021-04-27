@@ -6,6 +6,9 @@
 #include "kann_extra/kann_data.h"
 #include "kann.h"
 
+#define U_HEIGHT 120
+#define U_WIDTH 160
+
 int classes_name[3] = {40, 21, 04};
 
 typedef struct arrayCount
@@ -36,7 +39,9 @@ int main(int argc, char *argv[])
 	kann_data_t *x, *y;
 	char *fn_in = 0, *fn_out = 0;
 	// int c, mini_size = 64, max_epoch = 20, max_drop_streak = 10, seed = 131, n_h_fc = 128, n_h_flt = 32, n_threads = 1;
-	int c, mini_size = 32, max_epoch = 20, max_drop_streak = 5, seed = 6745, n_h_fc = 64, n_h_flt = 16, n_threads = 4;
+	int c, mini_size = 64, max_epoch = 10, max_drop_streak = 5, seed = 6745, n_threads = 4;
+	int n_h_flt = 16;  // `filters` argument, the dimensionality of the output space (i.e. the number of output filters in the convolution)(https://keras.io/api/layers/convolution_layers/convolution2d/)
+	int n_h_fc = 64;  // number of fully connected/dense units, as seen in Keras (https://www.tutorialspoint.com/keras/keras_dense_layer.htm)
 	// Crashes at epoch 13
 	// float lr = 0.001f, dropout = 0.2f, frac_val = 0.1f;
 	float lr = 0.001f, dropout = 0.1f, frac_val = 0.1f;
@@ -82,19 +87,43 @@ int main(int argc, char *argv[])
 	else
 	{
 		kad_node_t *t;
-		t = kad_feed(4, 1, 1, 128, 128), t->ext_flag |= KANN_F_IN;
-		t = kad_relu(kann_layer_conv2d(t, n_h_flt, 8, 8, 1, 1, 0, 0)); // 3x3 kernel; 1x1 stride; 0x0 padding
-		t = kad_relu(kann_layer_conv2d(t, n_h_flt, 16, 16, 1, 1, 0, 0));
-		t = kad_max2d(t, 16, 16, 4, 4, 0, 0); // 2x2 kernel; 2x2 stride; 0x0 padding
+		// t = kad_feed(4, 1, 1, U_HEIGHT, U_WIDTH), t->ext_flag |= KANN_F_IN;
+		// t = kad_relu(kann_layer_conv2d(t, n_h_flt, 8, 8, 1, 1, 0, 0)); // 3x3 kernel; 1x1 stride; 0x0 padding
+		// t = kad_relu(kann_layer_conv2d(t, n_h_flt, 16, 16, 1, 1, 0, 0));
+		// t = kad_max2d(t, 16, 16, 4, 4, 0, 0); // 2x2 kernel; 2x2 stride; 0x0 padding
+		// t = kann_layer_dropout(t, dropout);
+		// t = kann_layer_dense(t, n_h_fc);
+		// t = kad_relu(t);
+		// t = kann_layer_dropout(t, dropout);
+		// ann = kann_new(kann_layer_cost(t, 3, KANN_C_CEB), 0);
+
+		// LAST USED ARCHITECTURE
+		// t = kad_feed(4, 1, 1, U_HEIGHT, U_WIDTH), t->ext_flag |= KANN_F_IN;
+		// t = kad_relu(kann_layer_conv2d(t, n_h_flt, 9, 9, 1, 1, 0, 0)); // 3x3 kernel; 1x1 stride; 0x0 padding
+		// t = kad_relu(kann_layer_conv2d(t, n_h_flt, 3, 3, 1, 1, 0, 0));
+		// // t = kad_sigm(kann_layer_conv2d(t, n_h_flt, 3, 3, 1, 1, 0, 0));
+		// t = kad_max2d(t, 4, 4, 4, 4, 0, 0); // 2x2 kernel; 2x2 stride; 0x0 padding
+		// t = kann_layer_dropout(t, dropout);
+		// t = kann_layer_dense(t, n_h_fc);
+		// t = kad_relu(t);
+		// t = kann_layer_dropout(t, dropout);
+		// ann = kann_new(kann_layer_cost(t, 3, KANN_C_CEB), 0);
+
+		t = kad_feed(4, 1, 1, U_HEIGHT, U_WIDTH), t->ext_flag |= KANN_F_IN;
+		t = kad_relu(kann_layer_conv2d(t, n_h_flt, 3, 3, 1, 1, 0, 0)); // 3x3 kernel; 1x1 stride; 0x0 padding
+		t = kad_relu(kann_layer_conv2d(t, n_h_flt, 2, 2, 1, 1, 0, 0));
+		t = kad_max2d(t, 2, 2, 2, 2, 0, 0); // 2x2 kernel; 2x2 stride; 0x0 padding
 		t = kann_layer_dropout(t, dropout);
 		t = kann_layer_dense(t, n_h_fc);
-		t = kad_relu(t);
+		// t = kad_relu(t);
+		t = kad_sigm(t);
 		t = kann_layer_dropout(t, dropout);
-		ann = kann_new(kann_layer_cost(t, 3, KANN_C_CEB), 0);
+		ann = kann_new(kann_layer_cost(t, 4, KANN_C_CEB), 0);
+
 	}
 
 	x = kann_data_read(argv[optind]);
-	kann_data_t *kdt = createMyDynamicKann(argv[optind], x);
+	// kann_data_t *kdt = createMyDynamicKann(argv[optind], x);
 	// assert(x->n_col == 28 * 28);
 	y = argc - optind >= 2 ? kann_data_read(argv[optind + 1]) : 0;
 
@@ -131,8 +160,8 @@ int main(int argc, char *argv[])
 		{
 			const float *y;
 			int n_out = kann_dim_out(ann);
-			// y = kann_apply1(ann, x->x[i]);
-			y = kann_apply1(ann, kdt->x[i]);
+			y = kann_apply1(ann, x->x[i]);
+			// y = kann_apply1(ann, kdt->x[i]);
 			if (x->rname)
 				printf("%s\t", x->rname[i]); // index:className (ex. 1:40)
 
@@ -153,12 +182,12 @@ int main(int argc, char *argv[])
 				}
 			}
 			int asd = classes_name[max_index];
-			countToNameArray(className, classes_name[max_index]);
+			// countToNameArray(className, classes_name[max_index]);
 			printf("\nPredicted: %d\n", classes_name[max_index]); // predicted output
 		}
 	}
 
-	printPercentage();
+	// printPercentage();
 	kann_data_free(x);
 	kann_delete(ann);
 	return 0;

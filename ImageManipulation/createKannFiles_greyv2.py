@@ -4,12 +4,12 @@ import cv2
 import numpy as np
 
 HEADLINE = "#no:truth\t"
-HEIGHT = 128
-WIDTH = 128
-X_TRAIN_FILE = "../kann_test/mnist_test/kann-data/gtsrb-train-x-128-gray-nomess.knd"
-Y_TRAIN_FILE = "../kann_test/mnist_test/kann-data/gtsrb-train-y-128-gray-nomess.knd"
-TEST_FILE = "../kann_test/mnist_test/kann-data/gtsrb-test-grayscale-128.knd-nomess"
-VALIDATION_FILE = "../kann_test/mnist_test/kann-data/gtsrb-validation-gray-128.knd"  
+HEIGHT = 120
+WIDTH = 160
+X_TRAIN_FILE = "../kann_test/mnist_test/kann-data/gtsrb-train-x-160-gray.knd"
+Y_TRAIN_FILE = "../kann_test/mnist_test/kann-data/gtsrb-train-y-160-gray.knd"
+TEST_FILE = "../kann_test/mnist_test/kann-data/gtsrb-test-grayscale-160.knd"
+VALIDATION_FILE = "../kann_test/mnist_test/kann-data/gtsrb-validation-gray-160.knd"  
 # the validation dataset will consist of images also used for training(meaning some of the
 # images that are in X_TRAIN_FILE are also here)
 MAX_CLASSES = 3  # Max classes to read from files 
@@ -85,8 +85,8 @@ if(sys.argv[1] == "train"):
                 f_validation.write(indexClass)
 
             for pixel in im:
-                f_train_x.write(str(pixel/255) + "\t")
-                # f_train_x.write(str(f'{pixel/255.0:.2f}') + "\t")
+                # f_train_x.write(str(pixel/255) + "\t")
+                f_train_x.write(str(f'{pixel/255.0:.9f}') + "\t")
                 if validation_ready:
                     f_validation.write(str(pixel/255) + "\t")
 
@@ -116,7 +116,8 @@ if(sys.argv[1] == "train"):
 
 elif sys.argv[1] == "test":
     # Requires train to be run at least one time
-    fileName_test = "/home/awfulwaffle/Downloads/GTSRB/Final_Training/Images"  # the directory whose images I'm writing to the .kan file
+    # fileName_test = "/home/awfulwaffle/Downloads/GTSRB/Final_Training/Images"  # the directory whose images I'm writing to the .kan file
+    fileName_test = "/home/awfulwaffle/piphotos"
     f_test = open(TEST_FILE, "w")
     print("Reading from ", fileName_test, "...")
 
@@ -126,8 +127,8 @@ elif sys.argv[1] == "test":
     files_index = 0
     class_index = 0
     for subdir, dirs, files in os.walk(fileName_test):
-        if subdir == fileName_test:
-            continue
+        # if subdir == fileName_test:
+        #     continue
         for file in files:
             if class_index >= MAX_CLASSES:
                 break
@@ -143,8 +144,8 @@ elif sys.argv[1] == "test":
             index += 1
             f_test.write(indexClass) 
             for pixel in im:
-                # f_test.write(str(f'{pixel/255.0:.2f}') + "\t")
-                f_test.write(str(pixel/255) + "\t")
+                f_test.write(str(f'{pixel/255.0:.9f}') + "\t")
+                # f_test.write(str(pixel/255) + "\t")
             files_index += 1
             f_test.write("\n")
         class_index += 1

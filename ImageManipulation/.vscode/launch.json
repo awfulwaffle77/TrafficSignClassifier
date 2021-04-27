@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Current File",
-            "args": ["test"],
+            "args": ["train"],
             "type": "python",
             "request": "launch",
             "program": "${file}",

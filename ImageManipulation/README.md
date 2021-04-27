@@ -24,3 +24,5 @@ to not be one after another in the train file.
 
 - As this project will require lots of testing, write a script to
 write the output and the parameters used to a file
+
+- See if the written image has the same values in both .py and .c

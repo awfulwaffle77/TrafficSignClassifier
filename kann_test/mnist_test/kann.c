@@ -744,7 +744,7 @@ kad_node_t *kann_layer_lstm(kad_node_t *in, int n1, int rnn_flag)
 kad_node_t *kann_layer_conv2d(kad_node_t *in, int n_flt, int k_rows, int k_cols, int stride_r, int stride_c, int pad_r, int pad_c)
 {
 	kad_node_t *w;
-	w = kann_new_weight_conv2d(n_flt, in->d[1], k_rows, k_cols);
+	w = kann_new_weight_conv2d(n_flt, in->d[1], k_rows, k_cols);  // in->d[1] is the number of channels
 	return kad_conv2d(in, w, stride_r, stride_c, pad_r, pad_c);
 }
 

@@ -1,3 +1,6 @@
 kann_test/mnist_test/kann-data/mnist-train-x.knd
 kann_test/mnist_test/kann-data/gtsrb-train-x-128-gray-nomess.knd
 kann_test/mnist_test/kann-data/gtsrb-train-x-128-gray.knd
+*.knd
+*.kan
+tflite/flower_photos

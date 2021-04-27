@@ -7,7 +7,7 @@ A traffic sign classifier on the MIMXRT1020 EVK.
 
 ## TODO
 
-So far, I have managed to train a nerual network and make it
+~So far, I have managed to train a nerual network and make it
 identify some of the images, altough moving really slow. I
 need to have the captured image as an array of chars and feed it
 to the neural network from memory to have first full flow of work.
@@ -19,7 +19,12 @@ make a graph(also please write a script that automatically saves
 all of the data we need here: layers, exec time, size, accuracy,
 initial parameters 
 After that:
-- Create a neural network of smaller size to make it identify images faster
+- Create a neural network of smaller size to make it identify images faster~
+
+- Object detection with Sliding Window or Selective Search or sth
+- Creating a Faster R-CNN to classify images
+- Possibility to import parameters from a .hdf5 file trained in python
+- Graphs with differnt methods to see the time differences
 
 ## What I chose
 - Due to the fact that, at the moment, I have not found out how to use fs on Zephyr, I will try to
