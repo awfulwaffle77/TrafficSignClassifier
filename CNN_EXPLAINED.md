@@ -6,9 +6,17 @@ documentation.
 [Easier alternative for CNN development](https://www.researchgate.net/publication/308895193_Designing_Deep_Learning_Neural_Networks_using_Caffe)
 [C++ Faster R-CNN
 implementation](https://github.com/D-X-Y/caffe-faster-rcnn/tree/dev)
+[YOLO V5 Paper](https://arxiv.org/pdf/2011.08036.pdf)
+[Algorithm accuracies related to
+FPS](https://miro.medium.com/max/652/1*32ucN5yYa3ldqEDJEqJEpA.png)
 
 ## Papers 
 
+! Please take into consideration using EfficientDet, due to the fact
+that it has greater accuracy on low FPS, and our camera gets images very
+slow.
+
+[YOLO V5 Architecture](https://github.com/ultralytics/yolov5/issues/280)
 [Defense for two-stage object
 detector](https://arxiv.org/pdf/1711.07264.pdf#table.7)
 [EfficientNet](https://arxiv.org/pdf/1905.11946.pdf), currently

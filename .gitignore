@@ -4,3 +4,7 @@ kann_test/mnist_test/kann-data/gtsrb-train-x-128-gray.knd
 *.knd
 *.kan
 tflite/flower_photos
+*.zip
+ImageManipulation/yolov5/labels/*
+ImageManipulation/yolov5/images/*
+*.pb

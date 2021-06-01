@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <tensorflow/lite/c/c_api.h>
 
 struct filedata
@@ -41,28 +42,29 @@ struct filedata getData(char *filename)
 
 int main()
 {
-  struct filedata m = getData("converted_model.tflite");
+  struct filedata m = getData("converted_saved_model.tflite");
   // TfLiteModel *model = TfLiteModelCreateFromFile("converted_model.tflite");
   TfLiteModel* model = TfLiteModelCreate(m.data, m.size);
   // TfLiteModelCreate
   TfLiteInterpreter *interpreter = TfLiteInterpreterCreate(model, NULL);
 
-  struct filedata i = getData("flower1");
+
+  // Please, for the love of God, throw some exceptions when reading files
+  struct filedata i = getData("daisy.png");
   TfLiteInterpreterAllocateTensors(interpreter);
-  TfLiteTensor *input_tensor =
-      TfLiteInterpreterGetInputTensor(interpreter, 0);
+  TfLiteTensor *input_tensor = TfLiteInterpreterGetInputTensor(interpreter, 0);
   TfLiteTensorCopyFromBuffer(input_tensor, i.data,
                              i.size); // size is already times sizeof(float)
 
   TfLiteInterpreterInvoke(interpreter);
 
   struct filedata o;
-  o.data = (float*)malloc(sizeof(float) * 5);  // cause model predicts 5 classes
-  o.size = 5;
+  o.data = (double*)malloc(sizeof(double) * 6);  // cause model predicts 5 classes
+  o.size = 6;
   const TfLiteTensor *output_tensor =
   TfLiteInterpreterGetOutputTensor(interpreter, 0);
   TfLiteTensorCopyToBuffer(output_tensor, o.data,
-                           o.size * sizeof(float));
+                           o.size * sizeof(double));
 
   float f;
   for(int i = 0; i < 5; i++){
