@@ -1,7 +1,9 @@
 import cv2 
 
-filename = "flower_photos/roses/24781114_bc83aa811e_n.jpg"
+filename = "/home/awfulwaffle/repos/TrafficSignClassifier/tflite/flower_photos/sunflowers/6953297_8576bf4ea3.jpg"
 
 img = cv2.imread(filename)
+img = cv2.resize(img, (224,224))
+img = cv2.normalize(img, img, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
 
-open("flower1","wb").write(img)
+open("flower_sunflower","wb").write(img)
