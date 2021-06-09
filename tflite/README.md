@@ -14,7 +14,7 @@ testModel.c -ltensorflowlite_c`
 - `lib`: stores libtensorflow shard object libraries compiled for x86_64 on
   Ubuntu20
 
-## Limitations
+## Hardware limitations
 
 NXP MIMXRT1020-EVK has only 256Mbit of SDRAM, which means 8MB.
 
@@ -64,8 +64,22 @@ struct filedata o;
   }
 ```
 
+## Model issues
+
+- When converting the `saved model` to `.tflite`, the model input size
+  transformed to `[1,1,3]`(width 1, height 1). The issue is discussed
+[here](https://github.com/tensorflow/tensorflow/issues/42153#issuecomment-767493489) and is
+solved with the following command, from directory
+`TensorFlow/models/research` with the following command:
+`python ./object_detection/export_tflite_graph_tf2.py --pipeline_config_path workspace/training_demo/models/my_ssd_mobilenet_v2_320x320/pp.config --trained_checkpoint_dir workspace/training_demo/models/my_ssd_mobilenet_v2_320x320/ --output_directory workspace/training_demo/exported-models/ssdmobilenet_github`  
+
+- Builtin ops: *! Please verfiy the errors in `saved_model_to_tflite.py`
+  where you have to add ops at `converter.target_spec.supported_ops`*
 
 ## Models used
+
+*Note: you can unzip(or tar(?)) `.tflite` models to get the labelmap.txt
+to see label classes.*
 
 - [lite-model_ssd_mobilenet_v1_1_metadata_2.tflite](https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2); 
 this always outputs 10 classes, 10 scores etc. as stated on [this

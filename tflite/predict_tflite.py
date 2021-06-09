@@ -17,8 +17,8 @@ import numpy as np
 # print(predicted_index)
 
 # Load TFLite model and allocate tensors.
-interpreter = tf.lite.Interpreter(model_path="/home/awfulwaffle/repos/TrafficSignClassifier/tflite/lite-model_ssd_mobilenet_v1_1_metadata_2.tflite")
-# interpreter = tf.lite.Interpreter(model_path="/home/awfulwaffle/repos/TrafficSignClassifier/tflite/custom_ssdmobile.tflite")
+# interpreter = tf.lite.Interpreter(model_path="/home/awfulwaffle/repos/TrafficSignClassifier/tflite/lite-model_ssd_mobilenet_v1_1_metadata_2.tflite")
+interpreter = tf.lite.Interpreter(model_path="models/ssdmobilenet_github.tflite")
 interpreter.allocate_tensors()
 
 # Get input and output tensors.

@@ -8,3 +8,5 @@ tflite/flower_photos
 ImageManipulation/yolov5/labels/*
 ImageManipulation/yolov5/images/*
 *.pb
+*.so
+tflite/models/centernet_512x512/*
