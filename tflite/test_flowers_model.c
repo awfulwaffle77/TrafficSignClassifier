@@ -59,11 +59,14 @@ int main()
   struct filedata o;
   o.data = (float*)malloc(sizeof(float) * 5);  // cause model predicts 5 classes
   o.size = 5;  // seems like it is VERY important to have the exact number of predictions
+
+  // it seems that here we can specify the tensor index from the output dictionary
   const TfLiteTensor *output_tensor =
-  TfLiteInterpreterGetOutputTensor(interpreter, 0);
+  TfLiteInterpreterGetOutputTensor(interpreter, 0);  
   TfLiteTensorCopyToBuffer(output_tensor, o.data,
                            o.size * sizeof(float));
 
+  int x = TfLiteInterpreterGetOutputTensorCount(interpreter);
   float f;
   float max = -100;
   int idx = -1;

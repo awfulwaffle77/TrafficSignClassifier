@@ -11,7 +11,7 @@
                 "${file}",
                 "-ltensorflowlite_c",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${fileDirname}/${fileBasenameNoExtension}.out"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
