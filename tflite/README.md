@@ -9,6 +9,10 @@ that I have made for steps of getting it to work.
 I got it running: `gcc -o test -I/usr/local/include -L/usr/local/lib
 testModel.c -ltensorflowlite_c`
 
+## Saved Model (to add to documentation)
+
+[Reference](https://www.tensorflow.org/guide/saved_model)
+
 ## Folders
 
 - `lib`: stores libtensorflow shard object libraries compiled for x86_64 on
@@ -67,11 +71,18 @@ struct filedata o;
 ## Model issues
 
 - When converting the `saved model` to `.tflite`, the model input size
-  transformed to `[1,1,3]`(width 1, height 1). The issue is discussed
+  is transformed to `[1,1,3]`(width 1, height 1). The issue is discussed
 [here](https://github.com/tensorflow/tensorflow/issues/42153#issuecomment-767493489) and is
 solved with the following command, from directory
 `TensorFlow/models/research` with the following command:
 `python ./object_detection/export_tflite_graph_tf2.py --pipeline_config_path workspace/training_demo/models/my_ssd_mobilenet_v2_320x320/pp.config --trained_checkpoint_dir workspace/training_demo/models/my_ssd_mobilenet_v2_320x320/ --output_directory workspace/training_demo/exported-models/ssdmobilenet_github`  
+
+*The issue is NOT solved even in tf-nighlty.*
+
+To note that this solution works only if you have a pipeline.config and
+a checkpoint file. For converting code from a `saved_model`, the script 
+`saved_model_to_tflite_modified_input.py` does the trick, with reference
+[here](https://github.com/tensorflow/tensorflow/issues/30180#issuecomment-505959220)
 
 - Builtin ops: *! Please verfiy the errors in `saved_model_to_tflite.py`
   where you have to add ops at `converter.target_spec.supported_ops`*
@@ -89,7 +100,7 @@ note #2
 I have used a model that classifies flowers from
 [here](https://www.tensorflow.org/hub/tutorials/tf2_image_retraining)
 and have successfully had it load a model from memory and predict
-classes in file `testModel.c`.
+classes in file `test_flowers_model.c`.
 
 `exportPhoto.py` exports photo as raw format after *resizing and normalizing*. Very important.
 

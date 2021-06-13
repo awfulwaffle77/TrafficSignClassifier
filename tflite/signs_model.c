@@ -24,11 +24,8 @@ struct filedata getData(char *filename)
 
   for (int i = 0; i < sz / 4; i++)
   { // size is number of floats * 4(floats size)
-    // fscanf(fin, "%f", &f);
-    // data[i++] = f;
     fread(&f, 4, 1, fin);
     data[idx++] = f;
-    // fread(&data[idx], 4, 1, fin);  // size is 4 cause we have floats
   }
 
   struct filedata ret;
@@ -40,15 +37,14 @@ struct filedata getData(char *filename)
 
 int main()
 {
-  // struct filedata m = getData("flowers_model.tflite");
-  // TfLiteModel *model = TfLiteModelCreateFromFile("/home/awfulwaffle/repos/TrafficSignClassifier/tflite/custom_ssdmobile.tflite");
-  TfLiteModel *model = TfLiteModelCreateFromFile("/home/awfulwaffle/repos/TrafficSignClassifier/tflite/lite-model_ssd_mobilenet_v1_1_metadata_2.tflite");
-  // TfLiteModel* model = TfLiteModelCreate(m.data, m.size);
-  // TfLiteModelCreate
+
+  // TfLiteModel *model = TfLiteModelCreateFromFile("models/centernet_512x512.tflite");
+  struct filedata m = getData("models/centernet_512x512.tflite");
+  TfLiteModel *model = TfLiteModelCreate(m.data, m.size);
   TfLiteInterpreter *interpreter = TfLiteInterpreterCreate(model, NULL);
 
   // Please, for the love of God, throw some exceptions when reading files
-  struct filedata i = getData("apple"); // here there can be any flower images, resized to 224,224 and normalized in [0,1]
+  struct filedata i = getData("images_to_test/centernet512x512"); // here there can be any flower images, resized to 224,224 and normalized in [0,1]
   TfLiteInterpreterAllocateTensors(interpreter);
   TfLiteTensor *input_tensor = TfLiteInterpreterGetInputTensor(interpreter, 0);
   TfLiteTensorCopyFromBuffer(input_tensor, i.data,
@@ -57,77 +53,65 @@ int main()
   TfLiteInterpreterInvoke(interpreter);
 
   struct filedata o;
-  o.data = (float *)malloc(sizeof(float) * 1); // cause model predicts 5 classes
-  o.size = 10;                                 // seems like it is VERY important to have the exact number of predictions
+  o.data = (float *)malloc(sizeof(float) * 1);
+  o.size = 10; // seems like it is VERY important to have the exact number of predictions
 
   // it seems that here we can specify the tensor index from the output dictionary
   const TfLiteTensor *output_tensor =
       TfLiteInterpreterGetOutputTensor(interpreter, 2);
   TfLiteTensorCopyToBuffer(output_tensor, o.data,
                            o.size * sizeof(float));
-  int x = TfLiteInterpreterGetOutputTensorCount(interpreter);
+  int tensor_count = TfLiteInterpreterGetOutputTensorCount(interpreter);
+  printf("Tensor count: %d\n", tensor_count);
 
-  float _f;
-  for (int i = 0; i < 10; i++)
+  // as the documentation shows, on the current model(centernet 512x512), the 4th output tensor is number of occurences
+  struct filedata o_num_detections;
+  o_num_detections.data = (float *)malloc(sizeof(float) * 1);
+  o_num_detections.size = 1;
+  const TfLiteTensor *output_tensor_num_detections =
+      TfLiteInterpreterGetOutputTensor(interpreter, tensor_count - 1);
+
+  TfLiteTensorCopyToBuffer(output_tensor_num_detections, o_num_detections.data,
+                           o_num_detections.size * sizeof(float));
+
+  float number_of_detections;
+  memcpy(&number_of_detections, o_num_detections.data, 4);
+  printf("Number of detections: %f ", number_of_detections);
+  fflush(stdout);
+
+  struct filedata o_boxes;
+  // o_boxes.data = (float**)malloc(sizeof(float*) * (int)number_of_detections);
+  float ***box_coords = (float ***)malloc(sizeof(float **) * 1);
+  o_boxes.size = 1 * 100 * 4;
+
+  box_coords[0] = (float **)malloc(sizeof(float *) * 100);
+  for (int i = 0; i < 100; i++)
   {
-    memcpy(&_f, o.data + i * 4, 4);
-    printf("%f ", _f);
-    fflush(stdout);
+    box_coords[0][i] = (float *)calloc(sizeof(float), 4); // box has 4 coordinates
   }
+  o_boxes.data = box_coords;
 
-  // float f;
-  // float max = -100;
-  // int idx = -1;
-  // for(int i = 0; i < 5; i++){
-  //   memcpy(&f, o.data + i * 4, 4);
-  //   if(f > max){
-  //     max = f;
-  //     idx = i;
-  //   }
+  const TfLiteTensor *output_tensor_boxes =
+      TfLiteInterpreterGetOutputTensor(interpreter, 0);
+  TfLiteTensorCopyToBuffer(output_tensor_boxes, o_boxes.data,
+                           o_boxes.size * sizeof(float));
 
-  //   printf("%f ", f);
-  // }
-  // printf("\nPredicted class is: %d\n", idx);
+  float coords;
+  box_coords = (float ***)&o_boxes.data;
+  for (int i = 0; i < o_boxes.size; i++)
+  {
+    // box_coords[0][0][0] is some kind of value ??
+    memcpy(&coords, box_coords[0][i], 4); // float size * 4 coords
+    for (int j = 0; j < 4; j++)
+    {
+      printf("%f ", coords);
+    }
 
-  // struct filedata m = getData("flowers_model.tflite");
-  // // TfLiteModel *model = TfLiteModelCreateFromFile("converted_model.tflite");
-  // TfLiteModel *model = TfLiteModelCreate(m.data, m.size);
-  // // TfLiteModelCreate
-  // TfLiteInterpreter *interpreter = TfLiteInterpreterCreate(model, NULL);
-
-  // // Please, for the love of God, throw some exceptions when reading files
-  // struct filedata i = getData("flower1");
-  // TfLiteInterpreterAllocateTensors(interpreter);
-  // TfLiteTensor *input_tensor = TfLiteInterpreterGetInputTensor(interpreter, 0);
-  // TfLiteTensorCopyFromBuffer(input_tensor, i.data,
-  //                            i.size); // size is already times sizeof(float)
-
-  // TfLiteInterpreterInvoke(interpreter);
-
-  // struct filedata o;
-  // // int detection_anchor_indices = 100;
-  // // int detection_boxes = 100 * 4;
-  // // int detection_classes = 100;
-  // // int detection_multiclass_scores = 100 * 44;
-  // // int detection_scores = 100;
-  // // int num_detections = 1;
-  // // int full_size = detection_anchor_indices + detection_boxes + detection_classes + detection_multiclass_scores + detection_scores + num_detections;
-  // // o.data = (float *)malloc(sizeof(float) * (full_size + 1)); // cause model predicts 5 classes
-  // // o.size = full_size + 1;
-  // o.data = (float*)malloc(sizeof(float) * (5 + 1));
-  // o.size = 5 + 1;
-  // const TfLiteTensor *output_tensor =
-  //     TfLiteInterpreterGetOutputTensor(interpreter, 0);
-  // TfLiteTensorCopyToBuffer(output_tensor, o.data,
-  //                          o.size);
-
-  // float f;
-  // for(int i = 0; i < 5; i++){
-  //   memcpy(&f, o.data + i * 4, 4);
-  //   printf("%f ", f);
-  // }
-  // // memcpy(&f, o.data + detection_anchor_indices + 1, 4);
-  // // printf("%f", f);
+    if (i == 5)
+    {
+      break;
+    }
+  }
 
   return 0;
 }
