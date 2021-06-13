@@ -1,3 +1,4 @@
+# Creates labels in YOLOv5 format (? needs verification)
 input_file = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/labels.txt"
 
 labels = []

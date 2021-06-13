@@ -1,0 +1,37 @@
+<annotation>
+    <folder>images</folder>
+    <filename>00257.jpg</filename>
+    <path>/home/awfulwaffle/repos/TrafficSignClassifier/ImageManipulation/PASCAL_VOC/images/00257.jpg</path>
+    <source>
+        <database>Unknown</database>
+    </source>
+    <size>
+        <width>320</width>
+        <height>320</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>25</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>291</xmin>
+            <ymin>134</ymin>
+            <xmax>305</xmax>
+            <ymax>155</ymax>
+        </bndbox>
+    </object>    <object>
+        <name>25</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>254</xmin>
+            <ymin>155</ymin>
+            <xmax>263</xmax>
+            <ymax>169</ymax>
+        </bndbox>
+    </object>
+</annotation>
