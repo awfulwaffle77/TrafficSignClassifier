@@ -21,7 +21,8 @@ HEIGHT = 320
 # Load TFLite model and allocate tensors.
 # interpreter = tf.lite.Interpreter(model_path="/home/awfulwaffle/repos/TrafficSignClassifier/tflite/lite-model_ssd_mobilenet_v1_1_metadata_2.tflite")
 # interpreter = tf.lite.Interpreter(model_path="models/centernet_512x512.tflite")  # centernet_512x512 works correctly
-interpreter = tf.lite.Interpreter(model_path="models/ssdmobilenet_github.tflite")  # centernet_512x512 works correctly
+interpreter = tf.lite.Interpreter(
+    model_path="models/exported_ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8_v2.tflite")  # centernet_512x512 works correctly
 
 interpreter.allocate_tensors()
 
@@ -40,10 +41,11 @@ for detail in output_details:
 input_shape = input_details[0]['shape']
 # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
 # input_data = np.array(cv2.imread("/home/awfulwaffle/repos/TrafficSignClassifier/tflite/flower_tulips"), dtype=np.float32)
-image = cv2.imread("/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/00815.ppm")
-image = cv2.resize(image, (WIDTH,HEIGHT))
-input_data = np.array(np.expand_dims(image, axis=0), dtype=np.float32)
+image = cv2.imread("F:/repos/TensorFlow/workspace/training_demo/res/images/train/00001.jpg")
+image = cv2.resize(image, (WIDTH, HEIGHT))
+input_data = np.array(np.expand_dims(image, axis=0), dtype=np.uint8)
 interpreter.set_tensor(input_details[0]['index'], input_data)
+
 
 interpreter.invoke()
 
@@ -53,25 +55,34 @@ output_boxes = interpreter.get_tensor(output_details[0]["index"])
 output_classes = interpreter.get_tensor(output_details[1]["index"])
 output_scores = interpreter.get_tensor(output_details[2]["index"])
 output_num = interpreter.get_tensor(output_details[3]["index"])
+o_4 = interpreter.get_tensor(output_details[4]["index"])
+o_5 = interpreter.get_tensor(output_details[5]["index"])
+o_6 = interpreter.get_tensor(output_details[6]["index"])
 
 # output_data = interpreter.get_output_details()[2]["index"]
 # print(interpreter.get_tensor_details())
-print(output_boxes)
-print(output_classes)
-print(output_scores)
-print(output_num)
+print("Detection anchor indices: ", output_boxes)
+print("Boxes: ", output_classes)
+print("Classes: ", output_scores)
+print("Multiclass scores: ", output_num)
+print("Scores: ", o_4)
+print("Num detections: ", o_5)
+print("Raw boxes: ", o_6)
 
 idx = 0
-for box in output_boxes[0]:
-    print(box[1])
+for box in output_classes[0]:
+    # print(box[1])
     # I am not sure if the multiplication with HEIGHT and WIDTH are correct or if they should be inversed
-    ymin = round(box[1] * HEIGHT)
-    xmin = round(box[0] * WIDTH)
-    ymax = round(box[3] * HEIGHT)
-    xmax = round(box[2] * WIDTH)
-    image = cv2.rectangle(image, (ymin, xmin), (ymax, xmax), (255,0,0))  # box is ymin, xmin, ymax, xmax
+
+    # Order should be the one from here https://tfhub.dev/tensorflow/efficientdet/d3/1
+    ymin = round(box[0] * HEIGHT)
+    xmin = round(box[1] * WIDTH)
+    ymax = round(box[2] * HEIGHT)
+    xmax = round(box[3] * WIDTH)
+    print(ymin, xmin, ymax, xmax)
+    image = cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (255, 0, 0))  # box is ymin, xmin, ymax, xmax
     idx += 1
-    if idx == 5:
+    if idx == 10:
         break
     # https://stackoverflow.com/questions/48915003/get-the-bounding-box-coordinates-in-the-tensorflow-object-detection-api-tutorial
 cv2.imshow("img", image)

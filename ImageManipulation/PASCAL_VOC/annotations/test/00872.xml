@@ -1,0 +1,37 @@
+<annotation>
+    <folder>test</folder>
+    <filename>00872.jpg</filename>
+    <path>F:\repos\TrafficSignClassifier\ImageManipulation\PASCAL_VOC\images\test\00872.jpg</path>
+    <source>
+        <database>Unknown</database>
+    </source>
+    <size>
+        <width>320</width>
+        <height>320</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>10</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>220</xmin>
+            <ymin>162</ymin>
+            <xmax>228</xmax>
+            <ymax>176</ymax>
+        </bndbox>
+    </object>    <object>
+        <name>10</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>75</xmin>
+            <ymin>166</ymin>
+            <xmax>83</xmax>
+            <ymax>180</ymax>
+        </bndbox>
+    </object>
+</annotation>

@@ -1,6 +1,8 @@
 # Script to create PASCAL_VOC type annotations and .jpg images from .ppm
 # ! Must be run from PASCAL_VOC folder
 
+
+# Latest update: I have written this exactly to the folder from where I am training
 import os
 import copy
 import cv2
@@ -14,16 +16,16 @@ CV2_RESIZE_WIDTH = 320
 CV2_RESIZE_HEIGHT = 320
 
 # input_folder = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/"
-input_folder = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013"
-labels_dir = "./annotations/"
-images_dir = "./images/"
+input_folder = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
+labels_dir = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
+images_dir = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
 # ground truth file
-gt_file = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/gt.txt"
+gt_file = "F:/repos/FullIJCNN2013/gt.txt"
 
 with open(gt_file) as gt:
     gt_content = gt.readlines()
 
-_extension = "ppm"
+_extension = "jpg"
 train_percent = 70
 val_percent = 100 - train_percent
 
@@ -91,7 +93,8 @@ gt_dict = create_ground_truth_dict(gt_file)
 
 # Write the file labels
 # first, remove all the files there, because content is appended
-clear_dir(labels_dir)
+
+# clear_dir(labels_dir)
 print(os.getcwd())
 for key in gt_dict:
     filename = os.path.join(labels_dir, key.split(".")[0])
@@ -107,7 +110,7 @@ for key in gt_dict:
                          _sublist[2], _sublist[3], _sublist[4])
     writer.save(filename)
 
-# exit(0)
+exit(0)
 # =================== ENDING HERE ONLY FOR PASCAL VOC LABELS ========================================
 # all images have extension _extenstion, so we get their names
 all_files = os.listdir(input_folder)

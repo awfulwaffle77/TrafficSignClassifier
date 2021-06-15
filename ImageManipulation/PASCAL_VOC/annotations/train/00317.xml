@@ -1,0 +1,26 @@
+<annotation>
+    <folder>train</folder>
+    <filename>00317.jpg</filename>
+    <path>F:\repos\TrafficSignClassifier\ImageManipulation\PASCAL_VOC\images\train\00317.jpg</path>
+    <source>
+        <database>Unknown</database>
+    </source>
+    <size>
+        <width>320</width>
+        <height>320</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>32</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>264</xmin>
+            <ymin>151</ymin>
+            <xmax>274</xmax>
+            <ymax>168</ymax>
+        </bndbox>
+    </object>
+</annotation>
