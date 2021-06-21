@@ -87,6 +87,8 @@ a checkpoint file. For converting code from a `saved_model`, the script
 - Builtin ops: *! Please verfiy the errors in `saved_model_to_tflite.py`
   where you have to add ops at `converter.target_spec.supported_ops`*
 
+- Eval  issue solved with numpy==1.17.5
+
 ## Models used
 
 *Note: you can unzip(or tar(?)) `.tflite` models to get the labelmap.txt
@@ -120,7 +122,8 @@ answer](https://stackoverflow.com/questions/58623937/how-to-build-tensorflow-lit
 too.
 
 I have added the dep `//tensorflow/lite/delegates/flex:delegate",` in
-the `tensorflow/tensorflow/lite/c/BUILD` file and then compiled with
+the `tensorflow/tensorflow/lite/c/BUILD`, under
+`tflite_cc_shared_object` `deps` and then compiled with
 `sudo bazel build -c opt --config=monolithic
 --define=tflite_convert_with_select_tf_ops=true
 --define=with_select_tf_ops=true

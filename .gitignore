@@ -10,4 +10,5 @@ ImageManipulation/yolov5/images/*
 *.pb
 *.so
 tflite/models/centernet_512x512/*
+tflite/models/darknet*
 *.jpg

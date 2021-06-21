@@ -1,1 +1,9 @@
 *.jpg filter=lfs diff=lfs merge=lfs -text
+*.kan filter=lfs diff=lfs merge=lfs -text
+*.knd filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tflite filter=lfs diff=lfs merge=lfs -text
+tflite/models/darknet* filter=lfs diff=lfs merge=lfs -text
+tflite/models/darknet.tf/* filter=lfs diff=lfs merge=lfs -text
+tflite/models/darknet.tf_updated/* filter=lfs diff=lfs merge=lfs -text
+tflite/models/*

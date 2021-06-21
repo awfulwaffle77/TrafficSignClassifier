@@ -2,8 +2,8 @@ import tensorflow as tf
 import cv2
 import numpy as np
 
-WIDTH = 320
-HEIGHT = 320
+WIDTH = 640
+HEIGHT = 640
 
 # interpreter = tf.saved_model.load("saved_model_ssdmobilenet320x320")
 # interpreter = tf.lite.Interpreter("custom_ssdmobile.tflite")
@@ -22,7 +22,8 @@ HEIGHT = 320
 # interpreter = tf.lite.Interpreter(model_path="/home/awfulwaffle/repos/TrafficSignClassifier/tflite/lite-model_ssd_mobilenet_v1_1_metadata_2.tflite")
 # interpreter = tf.lite.Interpreter(model_path="models/centernet_512x512.tflite")  # centernet_512x512 works correctly
 interpreter = tf.lite.Interpreter(
-    model_path="models/exported_ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8_v2.tflite")  # centernet_512x512 works correctly
+    # model_path="models/exported_resnet640.tflite")  # centernet_512x512 works correctly
+    model_path="models/flowers_model.tflite")  # centernet_512x512 works correctly
 
 interpreter.allocate_tensors()
 
@@ -41,7 +42,7 @@ for detail in output_details:
 input_shape = input_details[0]['shape']
 # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
 # input_data = np.array(cv2.imread("/home/awfulwaffle/repos/TrafficSignClassifier/tflite/flower_tulips"), dtype=np.float32)
-image = cv2.imread("F:/repos/TensorFlow/workspace/training_demo/res/images/train/00001.jpg")
+image = cv2.imread("/home/awfulwaffle/repos/TrafficSignClassifier/ImageManipulation/images-yolov4/test/00802.jpg")
 image = cv2.resize(image, (WIDTH, HEIGHT))
 input_data = np.array(np.expand_dims(image, axis=0), dtype=np.uint8)
 interpreter.set_tensor(input_details[0]['index'], input_data)
@@ -75,14 +76,14 @@ for box in output_classes[0]:
     # I am not sure if the multiplication with HEIGHT and WIDTH are correct or if they should be inversed
 
     # Order should be the one from here https://tfhub.dev/tensorflow/efficientdet/d3/1
-    ymin = round(box[0] * HEIGHT)
-    xmin = round(box[1] * WIDTH)
-    ymax = round(box[2] * HEIGHT)
-    xmax = round(box[3] * WIDTH)
+    ymin = int(round(box[0] * HEIGHT))
+    xmin = int(round(box[1] * WIDTH))
+    ymax = int(round(box[2] * HEIGHT))
+    xmax = int(round(box[3] * WIDTH))
     print(ymin, xmin, ymax, xmax)
     image = cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (255, 0, 0))  # box is ymin, xmin, ymax, xmax
     idx += 1
-    if idx == 10:
+    if idx == 5:
         break
     # https://stackoverflow.com/questions/48915003/get-the-bounding-box-coordinates-in-the-tensorflow-object-detection-api-tutorial
 cv2.imshow("img", image)

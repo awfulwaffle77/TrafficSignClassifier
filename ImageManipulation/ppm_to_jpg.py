@@ -19,9 +19,16 @@ for subdir, dirs, files in os.walk(folderName):
         if filename.split('.')[-1] == "csv":
             os.remove(filename)
             continue
+        # as we have further used this script when creating .tfrecords, we ignore .xml files
+        if filename.split('.')[-1] == "xml":
+            continue
+        if filename.split('.')[-1] == "txt":
+                continue
+
         im = Image.open(filename)
         # Should be new path
         newname = filename.split('.')[0] + '.jpg'
+        # newname = filename + ".jpg"
         # Remove the ppm file as we do not need it
         im.save(newname)
         im.close()

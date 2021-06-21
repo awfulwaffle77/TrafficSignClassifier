@@ -1,19 +1,28 @@
-import os 
+import os
 import copy
 import cv2
 import shutil
 
 NRS_HEIGHT = 800  # non-resized height
-NRS_WIDTH =  1360  # non-resized width
+NRS_WIDTH = 1360  # non-resized width
 WIDTH = 1
 HEIGHT = 1
-CV2_RESIZE_WIDTH = 128
-CV2_RESIZE_HEIGHT = 128
+CV2_RESIZE_WIDTH = 320
+CV2_RESIZE_HEIGHT = 320
 
-input_folder = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/"
-labels_dir = "./labels/"
-images_dir = "./images/"
-gt_file =  "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/gt.txt"
+traffic_signs = {
+    "prohibitory": 0,
+    "danger": 1,
+    "mandatory": 2,
+    "other": 3
+}
+
+input_folder = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013"
+labels_dir = "./imgz/"
+images_dir = "./imgz/"
+gt_file = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/gt.txt"
+train_txt_name = "train.txt"
+train_path_to_files = "/content/darknet/build/darknet/x64/data/obj"
 
 with open(gt_file) as gt:
     gt_content = gt.readlines()
@@ -22,6 +31,29 @@ _extension = "ppm"
 train_percent = 70
 val_percent = 100 - train_percent
 
+
+def get_traffic_sign_by_id(id):
+    if 0 <= id <= 10:
+        if id == 6:
+            return "other"
+        else:
+            return "prohibitory"
+    elif id == 11:
+        return "danger"
+    elif 12 <= id <= 14:
+        return "other"
+    elif 15 <= id <= 16:
+        return "prohibitory"
+    elif id == 17:
+        return "other"
+    elif 18 <= id <= 31:
+        return "danger"
+    elif 32 <= id <= 40:
+        return "mandatory"
+    elif 41 <= id <= 42:
+        return "other"
+
+
 #  content is the content of gt.txt
 def create_ground_truth_dict(filename):
     f = open(filename, "r")
@@ -29,7 +61,7 @@ def create_ground_truth_dict(filename):
     _list = []
     _dict = {}
     for lines in f.readlines():
-        filename, leftCol, topRow, rightCol, bottomRow, _class= lines.split(";")
+        filename, leftCol, topRow, rightCol, bottomRow, _class = lines.split(";")
         # Change the points relative to the dimensions of the image
 
         # Rx = WIDTH/NRS_WIDTH
@@ -39,7 +71,6 @@ def create_ground_truth_dict(filename):
         topRow = int(topRow)
         rightCol = int(rightCol)
         bottomRow = int(bottomRow)
-
 
         width = rightCol - leftCol
         height = bottomRow - topRow
@@ -62,7 +93,7 @@ def create_ground_truth_dict(filename):
         # cv2.imshow(filename, im)
         # cv2.waitKey(0)
 
-        _class = _class[0:len(_class) - 1]  # _id came splitted with a \n
+        _class = traffic_signs[str(get_traffic_sign_by_id(int(_class[0:len(_class) - 1])))]  # _id came splitted with a \n
         _list.append(_class)
 
         _list.append(x_center)
@@ -81,29 +112,35 @@ def create_ground_truth_dict(filename):
 
     return _dict
 
+
 def clear_dir(dirname):
     for root, dirs, files in os.walk(dirname):
         for file in files:
             os.remove(os.path.join(root, file))
+
 
 gt_dict = create_ground_truth_dict(gt_file)
 
 # Write the file labels
 # first, remove all the files there, because content is appended
 clear_dir(labels_dir)
+# train_txt = open(train_txt_name, "w")
 for key in gt_dict:
-    filename = os.path.join(labels_dir, key.split(".")[0]) 
+    filename = os.path.join(labels_dir, key.split(".")[0])
+    # train_txt.write(train_path_to_files + "/" + key.split(".")[0] + ".jpg"+"\n")
     filename += ".txt"
-    f = open(filename,"a")  # key is filename
+    f = open(filename, "a")  # key is filename
     _list = gt_dict[key]
     toWrite = ""
     for i in range(len(_list)):
         _sublist = _list[i]
-        toWrite += _sublist[0] + " " + str(_sublist[1]) + " " + str(_sublist[2]) + " " + str(_sublist[3]) + " " + str(_sublist[4])
+        toWrite += str(_sublist[0]) + " " + str(_sublist[1]) + " " + str(_sublist[2]) + " " + str(_sublist[3]) + " " + str(_sublist[4])
         if i != len(_list) - 1:
             toWrite += "\n"
     f.write(toWrite)
 
+# exit(0)
+# ===================================================
 # all images have extension _extenstion, so we get their names
 all_files = os.listdir(input_folder)
 ext_files = []  # extension files
@@ -114,16 +151,16 @@ for file in all_files:
         ext_files.append(file)
 
 ext_files.sort()
-clear_dir(images_dir)
+# clear_dir(images_dir)
 # print(ext_files)
 print("Copying files..")
 for ext_file in ext_files:
-    
+
     full_input_path = os.path.join(input_folder, ext_file)
     save_path = os.path.join(images_dir, ext_file)
 
     if os.path.isfile(save_path):  # if it exists in images dir
-       continue 
+        continue
 
     shutil.copyfile(full_input_path, save_path)
     img = cv2.imread(save_path, cv2.IMREAD_COLOR)

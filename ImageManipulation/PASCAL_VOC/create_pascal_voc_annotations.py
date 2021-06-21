@@ -9,27 +9,55 @@ import cv2
 import shutil
 from pascal_voc_writer import Writer
 
-__TEST = False
+traffic_signs = {
+    "prohibitory": 0,
+    "danger": 1,
+    "mandatory": 2,
+    "other": 3
+}
+
+__TEST = False  # show image with calculated bounding boxes
 NRS_HEIGHT = 800  # non-resized height
 NRS_WIDTH = 1360  # non-resized width
 CV2_RESIZE_WIDTH = 320
 CV2_RESIZE_HEIGHT = 320
 
-# input_folder = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/"
-input_folder = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
-labels_dir = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
-images_dir = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
+input_folder = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013"
+# input_folder = "F:/repos/TensorFlow/workspace/training_demo/res/images/test"
+labels_dir = "output"
+images_dir = "output/"
 # ground truth file
-gt_file = "F:/repos/FullIJCNN2013/gt.txt"
+gt_file = "/home/awfulwaffle/Downloads/FullIJCNN2013/FullIJCNN2013/gt.txt"
 
 with open(gt_file) as gt:
     gt_content = gt.readlines()
 
-_extension = "jpg"
+_extension = "ppm"
 train_percent = 70
 val_percent = 100 - train_percent
 
 #  content is the content of gt.txt
+
+def get_traffic_sign_by_id(id):
+    if 0 <= id <= 10:
+        if id == 6:
+            return "other"
+        else:
+            return "prohibitory"
+    elif id == 11:
+        return "danger"
+    elif 12 <= id <= 14:
+        return "other"
+    elif 15 <= id <= 16:
+        return "prohibitory"
+    elif id == 17:
+        return "other"
+    elif 18 <= id <= 31:
+        return "danger"
+    elif 32 <= id <= 40:
+        return "mandatory"
+    elif 41 <= id <= 42:
+        return "other"
 
 
 def create_ground_truth_dict(filename):
@@ -61,7 +89,7 @@ def create_ground_truth_dict(filename):
             cv2.imshow("img", img)
             cv2.waitKey(0)
 
-        _class = _class[0:len(_class) - 1]  # _id came splitted with a \n
+        _class = traffic_signs[str(get_traffic_sign_by_id(int(_class[0:len(_class) - 1])))]  # _id came splitted with a \n
         _list.append(_class)
 
         _list.append(xMin)
@@ -94,7 +122,7 @@ gt_dict = create_ground_truth_dict(gt_file)
 # Write the file labels
 # first, remove all the files there, because content is appended
 
-# clear_dir(labels_dir)
+clear_dir(labels_dir)
 print(os.getcwd())
 for key in gt_dict:
     filename = os.path.join(labels_dir, key.split(".")[0])
@@ -110,7 +138,7 @@ for key in gt_dict:
                          _sublist[2], _sublist[3], _sublist[4])
     writer.save(filename)
 
-exit(0)
+# exit(0)
 # =================== ENDING HERE ONLY FOR PASCAL VOC LABELS ========================================
 # all images have extension _extenstion, so we get their names
 all_files = os.listdir(input_folder)
@@ -122,7 +150,7 @@ for file in all_files:
         ext_files.append(file)
 
 ext_files.sort()
-clear_dir(images_dir)
+# clear_dir(images_dir)
 # print(ext_files)
 print("Copying files..")
 

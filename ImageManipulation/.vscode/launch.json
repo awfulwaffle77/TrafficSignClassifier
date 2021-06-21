@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Current File",
-            "args": ["train"],
+            "args": ["/home/awfulwaffle/repos/TrafficSignClassifier/ImageManipulation/yolov5/imgz"],
             "type": "python",
             "request": "launch",
             "program": "${file}",
