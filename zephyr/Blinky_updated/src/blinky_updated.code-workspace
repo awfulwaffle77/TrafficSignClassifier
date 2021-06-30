@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Blinky_updated",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"devicetree.h": "c"
+		}
+	}
+}
