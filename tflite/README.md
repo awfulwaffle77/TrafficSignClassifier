@@ -9,6 +9,25 @@ that I have made for steps of getting it to work.
 I got it running: `gcc -o test -I/usr/local/include -L/usr/local/lib
 testModel.c -ltensorflowlite_c`
 
+## Cross-Compile and usage on RaspberryPi 3B+
+
+Finnaly got it to compile for RPi3B+ after like 3 days. The simple
+solution:
+- Download the docker image `tensorflow/tensorflow:devel`
+- cd `path/to/tensorflow_src`
+- `git checkout r2.3`
+- Compile with bazel with your optins with bazel flags
+  `--config=elinux_armhf` or `--config=elinux_aarch64`
+
+Most of the `.tflite` model I used require TFOps, enabled when
+converting the model. I managed to compile a model with
+`config=elinux_armhf`, with no ops or delegates. The program compiles
+with the libraries added as presented before.
+
+*Currently trying to compile with TFOps with options
+`--config=elinux_aarch64`. Current RPi OS is 32-bit. Need to change it
+to a 64-bit one.*
+
 ## Saved Model (to add to documentation)
 
 [Reference](https://www.tensorflow.org/guide/saved_model)

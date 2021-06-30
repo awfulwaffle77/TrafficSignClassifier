@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <tensorflow/lite/c/c_api.h>
+#include "models/hexembeded_models/model_yolov5working_tflite.h"
 
 struct filedata
 {
@@ -36,11 +38,43 @@ struct filedata getData(char *filename)
   return ret;
 }
 
+struct filedata getDataFromEmbedded(char* emb, int size){
+
+  // in the condition that the other functions have been so far correct,
+  // this is correct to, as the model outputs the same numbers
+  
+  // COORDINATES MUST BE TESTED
+  int idx = 0;
+  float *data = (float *)malloc(sizeof(float) * size);
+  char* cpy = malloc(sizeof(char) * 4);
+  float f;
+
+  for(int i = 0; i < size / 4; i++){
+    // sscanf(emb, "%f", &f);
+    cpy[0] = emb[0 + i * 4];
+    cpy[1] = emb[1 + i * 4];
+    cpy[2] = emb[2 + i * 4];
+    cpy[3] = emb[3 + i * 4];
+    // sscanf(cpy, "%f", &f);
+    f = *(float*)cpy;
+    data[idx++] = f;
+  }
+
+  struct filedata ret;
+  ret.data = data;
+  ret.size = size;
+
+  return ret;
+
+}
+
 int main()
 {
-
+  printf("%d\n", fsize);
+  fflush(stdout);
+  struct filedata n = getDataFromEmbedded(file, fsize);
   // TfLiteModel *model = TfLiteModelCreateFromFile("models/centernet_512x512.tflite");
-  struct filedata m = getData("models/yolov5_working.tflite");
+  struct filedata m = getData("models/tflite/yolov5_working.tflite");
   TfLiteModel *model = TfLiteModelCreate(m.data, m.size);
   TfLiteInterpreter *interpreter = TfLiteInterpreterCreate(model, NULL);
 
@@ -50,8 +84,12 @@ int main()
   TfLiteTensor *input_tensor = TfLiteInterpreterGetInputTensor(interpreter, 0);
   TfLiteTensorCopyFromBuffer(input_tensor, i.data,
                              i.size); // size is already times sizeof(float)
-
+  struct timeval start, stop;
+  gettimeofday(&start, NULL);
   TfLiteInterpreterInvoke(interpreter);
+  gettimeofday(&stop, NULL);
+  printf("Inference time: %lu us\n",(stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+
 
   // struct filedata o;
   // o.data = (float *)malloc(sizeof(float) * 1);

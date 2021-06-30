@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -156,11 +157,17 @@ int main(int argc, char *argv[])
 		// 	putchar('\n');
 		// }
 		kann_switch(ann, 0); // set the network for predicting
+		long int mean_time = 0;
 		for (int i = 0; i < x->n_row; i++)
 		{
 			const float *y;
 			int n_out = kann_dim_out(ann);
+			struct timeval start, stop;
+			gettimeofday(&start, NULL);
 			y = kann_apply1(ann, x->x[i]);
+			gettimeofday(&stop, NULL);
+			printf("Time: %lu us\n",(stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+			mean_time += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 			// y = kann_apply1(ann, kdt->x[i]);
 			if (x->rname)
 				printf("%s\t", x->rname[i]); // index:className (ex. 1:40)
@@ -182,12 +189,13 @@ int main(int argc, char *argv[])
 				}
 			}
 			int asd = classes_name[max_index];
-			// countToNameArray(className, classes_name[max_index]);
+			countToNameArray(className, classes_name[max_index]);
 			printf("\nPredicted: %d\n", classes_name[max_index]); // predicted output
 		}
-	}
 
-	// printPercentage();
+		printf("Mean time: %d\n", mean_time / x->n_row);
+	}
+	printPercentage();
 	kann_data_free(x);
 	kann_delete(ann);
 	return 0;
@@ -198,8 +206,10 @@ void printPercentage()
 	float percentage = 0.0;
 	for (int i = 0; i < nameArrayCount; i++)
 	{
-		percentage = (nameArray[i].correct_count / (nameArray[i].correct_count + nameArray[i].wrong_count)) * 100;
-		printf("Class: %d with %f confidence.", nameArray[i].id, percentage);
+		int total = nameArray[i].correct_count + nameArray[i].wrong_count;
+		float num = nameArray[i].correct_count;
+		percentage = (num / total) * 100;
+		printf("Class: %d with %f confidence from %d samples.\n", nameArray[i].id, percentage, total);
 		fflush(stdout);
 	}
 }

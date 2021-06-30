@@ -9,6 +9,6 @@ ImageManipulation/yolov5/labels/*
 ImageManipulation/yolov5/images/*
 *.pb
 *.so
-tflite/models/centernet_512x512/*
-tflite/models/darknet*
+tflite/models/saved_models/centernet_512x512/*
+tflite/models/saved_models/darknet*
 *.jpg
