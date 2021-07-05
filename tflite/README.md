@@ -28,6 +28,10 @@ with the libraries added as presented before.
 `--config=elinux_aarch64`. Current RPi OS is 32-bit. Need to change it
 to a 64-bit one.*
 
+Compiled with `bazel build --config=elinux_aarch64 --cxxopt=-D_GLIBCXX_USE_CX11_ABI=0 --noincompatible_do_not_split_linking_cmdline --config monolithic --define=tflite_convert_with_select_tf_ops=true --define=with_select_tf_ops=true //tensorflow/lite/c:tensorflowlite_c` from branch `r2.3`. Does not work on RPi as it throws the error `ERROR: The model is not a valid flatbuffer`. The model is working just fine on `x86_64`. 
+
+Tried several compilations of the library but outcome does not change.
+
 ## Saved Model (to add to documentation)
 
 [Reference](https://www.tensorflow.org/guide/saved_model)
